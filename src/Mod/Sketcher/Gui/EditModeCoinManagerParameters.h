@@ -105,6 +105,7 @@ struct DrawingParameters
     static SbColor InformationColor;                       // Information Overlay Color
     static SbColor CrossColorH;                            // Color for the Horizontal Axis
     static SbColor CrossColorV;                            // Color for the Vertical Axis
+    static double CrossLineWidth;                          // Line width for the axes
     static SbColor InvalidSketchColor;                     // Color for rendering an invalid sketch
     static SbColor FullyConstrainedColor;                  // Color for a fully constrained sketch
     static SbColor FullyConstraintInternalAlignmentColor;  // Color for fully constrained internal
@@ -166,6 +167,8 @@ struct DrawingParameters
         colorLong = Gui::ViewParams::instance()->getAxisYColor();
         color = Base::Color(static_cast<uint32_t>(colorLong));
         CrossColorV = SbColor(color.r, color.g, color.b);
+
+        CrossLineWidth = Gui::ViewParams::instance()->getAxisLineSize();
     }
 };
 

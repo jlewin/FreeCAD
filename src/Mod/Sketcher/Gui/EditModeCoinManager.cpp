@@ -1848,7 +1848,7 @@ void EditModeCoinManager::updateInventorNodeSizes()
     editModeScenegraphNodes.OriginPointSet->markerIndex
         = Gui::Inventor::MarkerBitmaps::getMarkerIndex("CIRCLE_FILLED", drawingParameters.markerSize);
 
-    editModeScenegraphNodes.RootCrossDrawStyle->lineWidth = 2 * drawingParameters.pixelScalingFactor;
+    editModeScenegraphNodes.RootCrossDrawStyle->lineWidth = drawingParameters.CrossLineWidth * drawingParameters.pixelScalingFactor;
     editModeScenegraphNodes.EditCurvesDrawStyle->lineWidth = 3 * drawingParameters.pixelScalingFactor;
     editModeScenegraphNodes.EditMarkersDrawStyle->pointSize = 8
         * drawingParameters.pixelScalingFactor;

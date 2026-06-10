@@ -69,6 +69,7 @@ Base::Color Vcolor = Base::Color(static_cast<uint32_t>(VColorLong));
 }  // namespace
 SbColor DrawingParameters::CrossColorH(Hcolor.r, Hcolor.g, Hcolor.b);
 SbColor DrawingParameters::CrossColorV(Vcolor.r, Vcolor.g, Vcolor.b);
+double DrawingParameters::CrossLineWidth = 1.0f;
 
 SbColor DrawingParameters::InvalidSketchColor(1.0f, 0.42f, 0.0f);    // #FF6D00 -> (255,109,  0)
 SbColor DrawingParameters::FullyConstrainedColor(0.0f, 1.0f, 0.0f);  // #00FF00 -> (  0,255,  0)
