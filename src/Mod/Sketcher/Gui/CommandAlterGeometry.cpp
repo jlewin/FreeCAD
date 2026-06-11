@@ -246,9 +246,23 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
 
 bool CmdSketcherToggleConstruction::isActive()
 {
-    return isAlterGeoActive(getActiveGuiDocument());
-}
+    // isAlterGeoActive() just returns ViewProviderSketch->isInEditMode
+    bool editMode;
+    editMode = isAlterGeoActive(getActiveGuiDocument());
 
+    // If Construction mode has been toggled on but the document is no longer being edited,
+    // turn off contruction mode and update bound ui commands
+    if (geometryCreationMode == GeometryCreationMode::Construction 
+        && !editMode) 
+    {
+        geometryCreationMode = GeometryCreationMode::Normal;
+
+        Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
+        rcCmdMgr.updateCommands("ToggleConstruction", static_cast<int>(geometryCreationMode));
+    }
+
+    return editMode;
+}
 }  // namespace SketcherGui
 
 void CreateSketcherCommandsAlterGeo()
