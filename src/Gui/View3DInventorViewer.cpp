@@ -4957,18 +4957,26 @@ void View3DInventorViewer::drawAxisCross()
     vv.getMatrices(affine, projection);
 
     const SbMatrix comb = model.multRight(projection);
-    SbVec3f xpos;
-    comb.multVecMatrix(SbVec3f(1, 0, 0), xpos);
-    xpos[0] = (1 + xpos[0]) * static_cast<float>(viewWidth) / 2.0f;
-    xpos[1] = (1 + xpos[1]) * static_cast<float>(viewHeight) / 2.0f;
-    SbVec3f ypos;
-    comb.multVecMatrix(SbVec3f(0, 1, 0), ypos);
-    ypos[0] = (1 + ypos[0]) * static_cast<float>(viewWidth) / 2.0f;
-    ypos[1] = (1 + ypos[1]) * static_cast<float>(viewHeight) / 2.0f;
-    SbVec3f zpos;
-    comb.multVecMatrix(SbVec3f(0, 0, 1), zpos);
-    zpos[0] = (1 + zpos[0]) * static_cast<float>(viewWidth) / 2.0f;
-    zpos[1] = (1 + zpos[1]) * static_cast<float>(viewHeight) / 2.0f;
+
+    // The axis cross is rendered with a square frustum into the square overlay
+    // viewport (pixelarea x pixelarea). Project a fixed point along each axis
+    // ray and map the resulting normalized device coordinates into that same
+    // square pixel space, so the letters and the arrow tips share one
+    // coordinate system and stay aligned for any main-window aspect ratio.
+    constexpr float letterDistance = 1.15f;
+    const auto projectAxis = [&](const SbVec3f& dir) {
+        SbVec3f ndc;
+        comb.multVecMatrix(dir * letterDistance, ndc);
+        return SbVec3f(
+            (1.0f + ndc[0]) * 0.5f * static_cast<float>(pixelarea),
+            (1.0f + ndc[1]) * 0.5f * static_cast<float>(pixelarea),
+            ndc[2]
+        );
+    };
+
+    const SbVec3f xpos = projectAxis(SbVec3f(1, 0, 0));
+    const SbVec3f ypos = projectAxis(SbVec3f(0, 1, 0));
+    const SbVec3f zpos = projectAxis(SbVec3f(0, 0, 1));
 
     auto& overlay = overlayAxisCrossState();
     overlay.ensureCreated();
@@ -5003,26 +5011,38 @@ void View3DInventorViewer::drawAxisCross()
         overlay.axisGroup->addChild(axis.second);
     }
 
-    overlay.lettersCamera->aspectRatio.setValue(
-        static_cast<float>(viewWidth) / static_cast<float>(viewHeight)
-    );
-    overlay.lettersCamera->height.setValue(static_cast<float>(viewHeight));
+    // Match the orthographic letters camera to the square overlay viewport so
+    // one world unit equals one framebuffer pixel and its mapping is identical
+    // to the axis cross above (aspect ratio 1, centered on the origin).
+    overlay.lettersCamera->aspectRatio.setValue(1.0f);
+    overlay.lettersCamera->height.setValue(static_cast<float>(pixelarea));
 
-    // The overlay viewport above is sized in physical framebuffer pixels, so
-    // the axis letters must scale by the device pixel ratio to keep the same
-    // perceived size as the axis cross on HiDPI displays.
-    const float scale = static_cast<float>(axiscrossSize) / 30.0f
-        * static_cast<float>(devicePixelRatio());
+    // The letter bitmaps are XPM_WIDTH x XPM_HEIGHT px quads. Size them as a
+    // fraction of the overlay so they track the axis-cross size; pixelarea is
+    // already in framebuffer pixels, so no extra device-pixel-ratio factor is
+    // needed.
+    constexpr float letterHeightFraction = 0.07f;
+    const float scale = letterHeightFraction * static_cast<float>(pixelarea)
+        / static_cast<float>(XPM_HEIGHT);
     overlay.xLetter.scale->scaleFactor.setValue(scale, scale, 1.0f);
     overlay.yLetter.scale->scaleFactor.setValue(scale, scale, 1.0f);
     overlay.zLetter.scale->scaleFactor.setValue(scale, scale, 1.0f);
 
-    overlay.xLetter.position->translation
-        .setValue(xpos[0] - 0.5f * viewWidth, xpos[1] - 0.5f * viewHeight, 0.0f);
-    overlay.yLetter.position->translation
-        .setValue(ypos[0] - 0.5f * viewWidth, ypos[1] - 0.5f * viewHeight, 0.0f);
-    overlay.zLetter.position->translation
-        .setValue(zpos[0] - 0.5f * viewWidth, zpos[1] - 0.5f * viewHeight, 0.0f);
+    // Center each glyph on its projected axis position. The overlay camera is
+    // centered on the viewport, hence the additional -pixelarea/2 offset.
+    const float halfArea = 0.5f * static_cast<float>(pixelarea);
+    const float halfGlyphW = 0.5f * static_cast<float>(XPM_WIDTH) * scale;
+    const float halfGlyphH = 0.5f * static_cast<float>(XPM_HEIGHT) * scale;
+    const auto place = [&](const SbVec3f& pos, SoTranslation* translation) {
+        translation->translation.setValue(
+            pos[0] - halfArea - halfGlyphW,
+            pos[1] - halfArea - halfGlyphH,
+            0.0f
+        );
+    };
+    place(xpos, overlay.xLetter.position);
+    place(ypos, overlay.yLetter.position);
+    place(zpos, overlay.zLetter.position);
 
     overlay.xLetter.texture->image.setValue(SbVec2s(XPM_WIDTH, XPM_HEIGHT), 4, XPM_pixel_data);
     overlay.yLetter.texture->image.setValue(SbVec2s(YPM_WIDTH, YPM_HEIGHT), 4, YPM_pixel_data);
