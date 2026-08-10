@@ -419,16 +419,10 @@ void SketcherSettingsGrid::loadSettings()
         "User parameter:BaseApp/Preferences/Mod/Sketcher/General"
     );
     int pattern = hGrp->GetInt("GridLinePattern", 0b1111111111111111);
-    int index = ui->gridLinePattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 1;
-    }
+    int index = std::max(0, ui->gridLinePattern->findData(QVariant(pattern)));
     ui->gridLinePattern->setCurrentIndex(index);
     pattern = hGrp->GetInt("GridDivLinePattern", 0b1111111111111111);
-    index = ui->gridDivLinePattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->gridDivLinePattern->findData(QVariant(pattern)));
     ui->gridDivLinePattern->setCurrentIndex(index);
 }
 
@@ -840,46 +834,33 @@ void SketcherSettingsAppearance::loadSettings()
         "User parameter:BaseApp/Preferences/Mod/Sketcher/View"
     );
     int pattern = hGrp->GetInt("EdgePattern", 0b1111111111111111);
-    int index = ui->EdgePattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+
+    int index = std::max(0, ui->EdgePattern->findData(QVariant(pattern)));
     ui->EdgePattern->setCurrentIndex(index);
 
     pattern = hGrp->GetInt("ConstructionPattern", 0b1111110011111100);
-    index = ui->ConstructionPattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->ConstructionPattern->findData(QVariant(pattern)));
     ui->ConstructionPattern->setCurrentIndex(index);
 
     pattern = hGrp->GetInt("InternalPattern", 0b1111110011111100);
-    index = ui->InternalPattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->InternalPattern->findData(QVariant(pattern)));
     ui->InternalPattern->setCurrentIndex(index);
 
     pattern = hGrp->GetInt("ExternalPattern", 0b1111110011111100);
-    index = ui->ExternalPattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->ExternalPattern->findData(QVariant(pattern)));
     ui->ExternalPattern->setCurrentIndex(index);
 
     pattern = hGrp->GetInt("ExternalDefiningPattern", 0b1111111111111111);
-    index = ui->ExternalDefiningPattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->ExternalDefiningPattern->findData(QVariant(pattern)));
     ui->ExternalDefiningPattern->setCurrentIndex(index);
 
     pattern = hGrp->GetInt("InformationPattern", 0b1111110011111100);
-    index = ui->InformationPattern->findData(QVariant(pattern));
-    if (index < 0) {
-        index = 0;
-    }
+    index = std::max(0, ui->InformationPattern->findData(QVariant(pattern)));
     ui->InformationPattern->setCurrentIndex(index);
+
+    pattern = hGrp->GetInt("AxisLinePattern", 0b1111111111111111);
+    index = std::max(0, ui->AxisLinePattern->findData(QVariant(pattern)));
+    ui->AxisLinePattern->setCurrentIndex(index);
 }
 
 /**
