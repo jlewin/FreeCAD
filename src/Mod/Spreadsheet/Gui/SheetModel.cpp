@@ -29,6 +29,7 @@
 
 #include <App/Document.h>
 #include <Base/Interpreter.h>
+#include <Base/Color.h>
 #include <Base/Tools.h>
 #include <Base/UnitsApi.h>
 #include <Gui/Application.h>
@@ -66,6 +67,12 @@ SheetModel::SheetModel(Sheet* _sheet, QObject* parent)
     // NOLINTEND
 
     aliasBgColor = QColor(QString::fromStdString(param->getAliasedCellBackgroundColor()));
+
+    Base::Color bgColor = param->getAlternatingCellBackgroundColor();
+    alternatingBackgroundColor = bgColor.asValue<QColor>();
+
+    alternateRowBackgroundColor = param->getAlternateRowBackgroundColor();
+
     textFgColor = QColor(QString::fromStdString(param->getTextColor()));
     positiveFgColor = QColor(QString::fromStdString(param->getPositiveNumberColor()));
     negativeFgColor = QColor(QString::fromStdString(param->getNegativeNumberColor()));
@@ -289,6 +296,10 @@ QVariant SheetModel::data(const QModelIndex& index, int role) const
             if (cell->getAlias(alias)) {
                 return QVariant::fromValue(aliasBgColor);
             }
+            else if (alternateRowBackgroundColor && row % 2 == 0) {
+                return QVariant::fromValue(alternatingBackgroundColor);
+            }
+
             return {};
         }
     }

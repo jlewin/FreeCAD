@@ -67,6 +67,8 @@ void DlgSettingsImp::saveSettings()
     ui->formatString->onSave();
     ui->dZLSpinBox->onSave();
     ui->checkBoxShowAlias->onSave();
+    ui->checkBoxAlternateRowColors->onSave();
+    ui->alternatingCellBackgroundColor->onSave();
 
     QVariant cols = ui->comboBoxColumns->itemData(ui->comboBoxColumns->currentIndex());
     if (cols.isValid()) {
@@ -113,6 +115,8 @@ void DlgSettingsImp::loadSettings()
     ui->formatString->onRestore();
     ui->dZLSpinBox->onRestore();
     ui->checkBoxShowAlias->onRestore();
+    ui->checkBoxAlternateRowColors->onRestore();
+    ui->alternatingCellBackgroundColor->onRestore();
 
     int indexC = ui->comboBoxColumns->findData(QVariant(int(param->getMaximumColumnCount())));
     if (indexC >= 0) {

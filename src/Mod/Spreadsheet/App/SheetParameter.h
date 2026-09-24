@@ -27,6 +27,7 @@
 
 #include <Base/ParameterObserver.h>
 #include <Mod/Spreadsheet/SpreadsheetGlobal.h>
+#include <Base/Color.h>
 
 namespace Spreadsheet
 {
@@ -53,6 +54,9 @@ public:
     std::string getAliasedCellBackgroundColor() const;
     void setAliasedCellBackgroundColor(std::string v);
 
+    Base::Color getAlternatingCellBackgroundColor() const;
+    void setAlternatingCellBackgroundColor(Base::Color v);
+
     std::string getTextColor() const;
     void setTextColor(std::string v);
 
@@ -64,6 +68,9 @@ public:
 
     std::string getDisplayAliasFormatString() const;
     void setDisplayAliasFormatString(std::string v);
+
+    bool getAlternateRowBackgroundColor() const;
+    void setAlternateRowBackgroundColor(bool v);
 
     bool getShowAliasName() const;
     void setShowAliasName(bool v);

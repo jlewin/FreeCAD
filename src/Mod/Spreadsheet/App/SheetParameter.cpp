@@ -40,6 +40,8 @@ void SheetParameter::setup()
     addParameter("DisplayAliasFormatString", String {"%V = %A"});
     addParameter("showAliasName", Bool {false});
     addParameter("SwitchToWB", Bool {true});
+    addParameter("AlternateRowBackgroundColor", Bool {false});
+    addParameter("AlternatingCellBackgroundColor", Unsigned {0xE6E6E6FF});
     addParameter("DefaultZoomLevel", Int {100});
     addParameter("MaximumRowCount", Int {1024});
     addParameter("MaximumColumnCount", Int {26});
@@ -72,6 +74,7 @@ FC_PARAM_GETSET_IMP(SheetParameter, DisplayAliasFormatString, std::string)     /
 FC_PARAM_GETSET_IMP(SheetParameter, DefaultZoomLevel, long)
 FC_PARAM_GETSET_IMP(SheetParameter, MaximumRowCount, long)
 FC_PARAM_GETSET_IMP(SheetParameter, MaximumColumnCount, long)
+FC_PARAM_GETSET_IMP(SheetParameter, AlternateRowBackgroundColor, bool)
 
 bool SheetParameter::getShowAliasName() const
 {
@@ -81,6 +84,19 @@ bool SheetParameter::getShowAliasName() const
 void SheetParameter::setShowAliasName(bool v)
 {
     setValue("showAliasName", v);
+}
+
+Base::Color SheetParameter::getAlternatingCellBackgroundColor() const
+{
+    uint32_t packedColor = (uint32_t)getValue<unsigned long>("AlternatingCellBackgroundColor");
+    Base::Color bgColor(packedColor);
+
+    return bgColor;
+}
+
+void SheetParameter::setAlternatingCellBackgroundColor(Base::Color color)
+{
+    setValue("AlternatingCellBackgroundColor", color.getPackedValue());
 }
 
 bool SheetParameter::getSwitchToWorkbench() const

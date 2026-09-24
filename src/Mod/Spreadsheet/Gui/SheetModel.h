@@ -73,6 +73,8 @@ private:
     QColor textFgColor;
     QColor positiveFgColor;
     QColor negativeFgColor;
+    QColor alternatingBackgroundColor;
+    bool alternateRowBackgroundColor;
 };
 
 }  // namespace SpreadsheetGui
